@@ -1,11 +1,14 @@
 package lanmapping.configure;
 
+import lanmapping.server.LanMappingServer;
 import lanmapping.template.LmType;
 import lanmapping.utils.IniFileEntity;
+import lanmapping.vo.LanMappingVo;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 /**
@@ -16,7 +19,7 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true)
 @Data
 @ConfigurationProperties(prefix = "lm.frp")
-public class FrpConfigure extends LanMapping{
+public class FrpConfigure extends LanMappingServer {
     /**
      * 服务提供商提供的 frp 服务器 IP 地址或者域名地址
      */
@@ -30,39 +33,76 @@ public class FrpConfigure extends LanMapping{
      */
     private String token;
     /**
-     * 自定义参数
+     * 子模块属性
      */
-    private List<String> args=new ArrayList<>();
     private List<FrpClient> clients=new ArrayList<>();
+    /**
+     * ini解析
+     * @return
+     * @throws IllegalAccessException
+     */
     public List<IniFileEntity> parse() {
         List<IniFileEntity> list = new ArrayList<>();
-        String section = "common";
-        list.add(new IniFileEntity(section, "server_addr", server_addr));
-        list.add(new IniFileEntity(section, "server_port", server_port));
-        list.add(new IniFileEntity(section, "token", token));
-        for (String s : args) {
-            String[] strs = s.split("=");
-            if (strs.length == 2) {
-                list.add(new IniFileEntity(section, strs[0], strs[1]));
-            }
-        }
-        for (FrpClient c : clients) {
-            section = c.type.toString()+"_"+c.custom_domains;
-            list.add(new IniFileEntity(section, "type", c.type.toString()));
-            list.add(new IniFileEntity(section, "local_ip", c.local_ip));
-            list.add(new IniFileEntity(section, "local_port", c.local_port));
-            list.add(new IniFileEntity(section, "remote_port", c.remote_port));
-            list.add(new IniFileEntity(section, "custom_domains", c.custom_domains));
-            System.out.println(c.type.toString() + "://" + c.custom_domains + ":" + c.remote_port);
-            for (String s : c.args) {
-                String[] strs = s.split("=");
-                if (strs.length == 2) {
-                    list.add(new IniFileEntity(section, strs[0], strs[1]));
+        try {
+            String section = "common";
+            // 通过反射获取属性
+            for (Field f : this.getClass().getDeclaredFields()) {
+                f.setAccessible(true);
+                // 获取值
+                Object obj = f.get(this);
+                if (obj instanceof String) {
+                    // 添加解析
+                    list.add(new IniFileEntity(section, f.getName(), obj.toString()));
+                } else {
+                    // 子属性迭代解析
+                    for (FrpClient frpClient : (List<FrpClient>) obj) {
+                        frpClient.parse(list);
+                    }
                 }
             }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         return list;
     }
+
+
+
+    @Override
+    public String[] bulid(LanMappingVo lanMappingVo,String path, String suffix) {
+        if (this.isEnable()) {
+
+        } else {
+            // 设置连接服务配置
+            this.server_addr = lanMappingVo.getServerAddr();
+            this.server_port = lanMappingVo.getServerPort();
+            this.token = lanMappingVo.getToken();
+            // 设置客户配置
+            FrpClient frpClient = new FrpClient();
+            frpClient.setType(lanMappingVo.getType());
+            frpClient.setLocal_ip(lanMappingVo.getLocalIp());
+            frpClient.setLocal_port(lanMappingVo.getLoaclPort());
+            frpClient.setRemote_port(lanMappingVo.getRemotePort());
+            frpClient.setCustom_domains(lanMappingVo.getSubdomain() + "." + lanMappingVo.getServerAddr());
+            this.clients.clear();
+            this.clients.add(frpClient);
+        }
+        // 生成ini配置文件
+        IniFileEntity.createIniFile(path + "/frp/config.ini", this.parse());
+        return new String[]{path + "/frp/frpc" + suffix, "-c", path + "/frp/config.ini"};
+    }
+
+    @Override
+    public boolean logPrint(String log) {
+        if (log.contains("login to server failed")) {
+            System.out.println("局域网映射失败!!!");
+            return false;
+        }
+        System.out.println(log);
+        return true;
+    }
+
+
     @Data
     @ConfigurationProperties(prefix = "lm.frp.clients")
     public static class FrpClient {
@@ -81,8 +121,21 @@ public class FrpConfigure extends LanMapping{
         private String remote_port = "80";
         private String custom_domains;
         /**
-         * 自定义参数
+         * ini解析
+         * @param list
+         * @throws IllegalAccessException
          */
-        private List<String> args=new ArrayList<>();
+        public void parse(List<IniFileEntity> list) throws IllegalAccessException {
+            // 拼接远程地址
+            String section = type.toString() + "_" + custom_domains+":" + remote_port;
+            // 通过反射获取属性
+            for (Field f : this.getClass().getDeclaredFields()) {
+                f.setAccessible(true);
+                // 获取值
+                list.add(new IniFileEntity(section, f.getName(),f.get(this).toString()));
+            }
+            // 输出远程地址
+            System.out.println(type.toString() + "://" + custom_domains+":" + remote_port);
+        }
     }
 }

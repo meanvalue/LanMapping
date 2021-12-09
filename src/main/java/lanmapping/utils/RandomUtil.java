@@ -8,6 +8,11 @@ import java.util.Random;
  * Date: 2021/12/5 21:05
  */
 public class RandomUtil {
+    /**
+     * 生成随机字符
+     * @param length
+     * @return
+     */
     public static String getRandomString(int length){
         String str="abcdefghijklmnopqrstuvwxyzZ0123456789";
         Random random=new Random();
