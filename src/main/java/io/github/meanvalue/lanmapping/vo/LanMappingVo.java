@@ -1,6 +1,6 @@
-package lanmapping.vo;
+package io.github.meanvalue.lanmapping.vo;
 
-import lanmapping.template.LmType;
+import io.github.meanvalue.lanmapping.template.LmType;
 import lombok.Data;
 
 /**

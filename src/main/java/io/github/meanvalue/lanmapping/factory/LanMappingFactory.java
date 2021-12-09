@@ -1,6 +1,6 @@
-package lanmapping.factory;
+package io.github.meanvalue.lanmapping.factory;
 
-import lanmapping.server.LanMappingServer;
+import io.github.meanvalue.lanmapping.server.LanMappingServer;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.HashMap;

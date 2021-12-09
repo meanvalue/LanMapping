@@ -1,4 +1,4 @@
-package lanmapping.utils;
+package io.github.meanvalue.lanmapping.utils;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

@@ -1,4 +1,4 @@
-package lanmapping.template;
+package io.github.meanvalue.lanmapping.template;
 
 /**
  * 映射类型枚举类

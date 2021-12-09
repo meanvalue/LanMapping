@@ -1,6 +1,6 @@
-package lanmapping.server;
+package io.github.meanvalue.lanmapping.server;
 
-import lanmapping.vo.LanMappingVo;
+import io.github.meanvalue.lanmapping.vo.LanMappingVo;
 
 import javax.annotation.PreDestroy;
 import java.io.BufferedReader;

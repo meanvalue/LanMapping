@@ -1,8 +1,8 @@
-package lanmapping;
+package io.github.meanvalue.lanmapping;
 
-import lanmapping.command.LanMappingCommand;
-import lanmapping.template.LanMappingTemplate;
-import lanmapping.template.LmType;
+import io.github.meanvalue.lanmapping.command.LanMappingCommand;
+import io.github.meanvalue.lanmapping.template.LanMappingTemplate;
+import io.github.meanvalue.lanmapping.template.LmType;
 import org.springframework.context.annotation.Import;
 
 import java.lang.annotation.*;

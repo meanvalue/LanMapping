@@ -1,8 +1,8 @@
-package lanmapping.configure;
+package io.github.meanvalue.lanmapping.configure;
 
-import lanmapping.EnableLanMapping;
-import lanmapping.factory.LanMappingFactory;
-import lanmapping.vo.LanMappingVo;
+import io.github.meanvalue.lanmapping.factory.LanMappingFactory;
+import io.github.meanvalue.lanmapping.EnableLanMapping;
+import io.github.meanvalue.lanmapping.vo.LanMappingVo;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationContext;

@@ -1,8 +1,8 @@
-package lanmapping.configure;
+package io.github.meanvalue.lanmapping.configure;
 
-import lanmapping.server.LanMappingServer;
-import lanmapping.utils.RandomUtil;
-import lanmapping.vo.LanMappingVo;
+import io.github.meanvalue.lanmapping.utils.RandomUtil;
+import io.github.meanvalue.lanmapping.server.LanMappingServer;
+import io.github.meanvalue.lanmapping.vo.LanMappingVo;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.springframework.boot.context.properties.ConfigurationProperties;

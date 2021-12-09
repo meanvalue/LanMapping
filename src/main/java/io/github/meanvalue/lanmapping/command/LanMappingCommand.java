@@ -1,8 +1,8 @@
-package lanmapping.command;
+package io.github.meanvalue.lanmapping.command;
 
-import lanmapping.factory.LanMappingFactory;
-import lanmapping.server.LanMappingServer;
-import lanmapping.vo.LanMappingVo;
+import io.github.meanvalue.lanmapping.factory.LanMappingFactory;
+import io.github.meanvalue.lanmapping.server.LanMappingServer;
+import io.github.meanvalue.lanmapping.vo.LanMappingVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
