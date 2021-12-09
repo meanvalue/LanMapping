@@ -6,7 +6,7 @@
 
     <groupId>lanmapping</groupId>
     <artifactId>LanMapping-spring-boot-starter</artifactId>
-    <version>1.0</version>
+    <version>1.1</version>
     <licenses>
         <license>
             <name>The Apache Software License, Version 2.0</name>
