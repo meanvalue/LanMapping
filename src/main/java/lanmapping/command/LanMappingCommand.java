@@ -1,9 +1,8 @@
 package lanmapping.command;
 
-import lanmapping.server.LanMappingServer;
 import lanmapping.factory.LanMappingFactory;
+import lanmapping.server.LanMappingServer;
 import lanmapping.vo.LanMappingVo;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
@@ -16,7 +15,6 @@ import org.springframework.util.StringUtils;
  * Date: 2021/12/5 20:07
  */
 @Order(100)
-@Slf4j
 public class LanMappingCommand implements CommandLineRunner {
 
     @Autowired
