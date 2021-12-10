@@ -1,14 +1,12 @@
 package io.github.meanvalue.lanmapping.server;
 
+import io.github.meanvalue.lanmapping.EnableLanMapping;
+import io.github.meanvalue.lanmapping.utils.LmUtil;
 import io.github.meanvalue.lanmapping.vo.LanMappingVo;
 
 import javax.annotation.PreDestroy;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.URLDecoder;
-import java.util.Objects;
+import java.io.*;
+import java.nio.file.Files;
 
 /**
  * 局域网映射服务类
@@ -24,7 +22,7 @@ public abstract class LanMappingServer {
     /**
      * 构建配置文件
      */
-    public abstract String[] bulid(LanMappingVo lanMappingVo,String path, String suffix);
+    public abstract String[] bulid(LanMappingVo lanMappingVo,String suffix,File temp);
     /**
      * 日记打印
      * @param log
@@ -32,19 +30,37 @@ public abstract class LanMappingServer {
     public abstract boolean logPrint(String log);
 
     /**
+     * 保存临时文件
+     * @param temp
+     * @param file
+     * @param suffix
+     */
+    public void save(File temp,String file,String suffix) {
+        // 获取程序目录
+        InputStream resourceAsStream = EnableLanMapping.class.getClassLoader().getResourceAsStream("lm/" + file + "/" + file + suffix);
+        try {
+            Files.copy(resourceAsStream, new File(temp, file+suffix).toPath());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    /**
      * 执行程序
      * @param lanMappingVo  映射信息
      */
     public void start(LanMappingVo lanMappingVo) {
         try {
             System.out.println("局域网映射开始!!!");
-            // 获取程序目录
-            String path = Objects.requireNonNull(Thread.currentThread().getContextClassLoader().getResource("lm")).getPath().substring(1);
-            path = URLDecoder.decode(path, "UTF-8");
+            // 获取临时目录
+            File temp = new File(System.getProperty("java.io.tmpdir"),"LanMapping");
+            // 删除临时目录
+            LmUtil.deleteFileOrDirectory(temp);
+            // 创建临时目录
+            temp.mkdirs();
             // 根据操作系统获取执行后缀
             String suffix = System.getProperty("os.name").contains("Windows") ? ".exe" : "";
             // 构建配置文件
-            String[] bulid = bulid(lanMappingVo, path, suffix);
+            String[] bulid = bulid(lanMappingVo, suffix,temp);
             // 执行命令程序
             process = Runtime.getRuntime().exec(bulid);
             // 获取日记流
@@ -83,6 +99,9 @@ public abstract class LanMappingServer {
             this.process.destroy();
             System.out.println("局域网映射销毁!!!");
         }
+        // 删除临时目录
+        File temp = new File(System.getProperty("java.io.tmpdir"), "LanMapping");
+        LmUtil.deleteFileOrDirectory(temp);
     }
 
     public boolean isEnable() {

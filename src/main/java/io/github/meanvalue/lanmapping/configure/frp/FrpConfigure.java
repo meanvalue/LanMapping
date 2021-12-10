@@ -1,13 +1,16 @@
-package io.github.meanvalue.lanmapping.configure;
+package io.github.meanvalue.lanmapping.configure.frp;
 
 import io.github.meanvalue.lanmapping.server.LanMappingServer;
 import io.github.meanvalue.lanmapping.template.LmType;
 import io.github.meanvalue.lanmapping.utils.IniFileEntity;
+import io.github.meanvalue.lanmapping.utils.LmUtil;
 import io.github.meanvalue.lanmapping.vo.LanMappingVo;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.util.StringUtils;
 
+import java.io.File;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
@@ -67,9 +70,15 @@ public class FrpConfigure extends LanMappingServer {
     }
 
 
-
+    /**
+     * 构建文件
+     * @param lanMappingVo
+     * @param suffix
+     * @param temp
+     * @return
+     */
     @Override
-    public String[] bulid(LanMappingVo lanMappingVo,String path, String suffix) {
+    public String[] bulid(LanMappingVo lanMappingVo, String suffix, File temp) {
         if (this.isEnable()) {
 
         } else {
@@ -79,6 +88,11 @@ public class FrpConfigure extends LanMappingServer {
             this.token = lanMappingVo.getToken();
             // 设置客户配置
             FrpClient frpClient = new FrpClient();
+            if (StringUtils.isEmpty(lanMappingVo.getSubdomain())) {
+                // 使用随机字符当子域名
+                lanMappingVo.setSubdomain(LmUtil.getRandomString(6));
+            }
+            // 使用注解配置
             frpClient.setType(lanMappingVo.getType());
             frpClient.setLocal_ip(lanMappingVo.getLocalIp());
             frpClient.setLocal_port(lanMappingVo.getLoaclPort());
@@ -87,9 +101,10 @@ public class FrpConfigure extends LanMappingServer {
             this.clients.clear();
             this.clients.add(frpClient);
         }
+        save(temp,"frp",suffix);
         // 生成ini配置文件
-        IniFileEntity.createIniFile(path + "/frp/config.ini", this.parse());
-        return new String[]{path + "/frp/frpc" + suffix, "-c", path + "/frp/config.ini"};
+        IniFileEntity.createIniFile(temp+ "/frp.ini", this.parse());
+        return new String[]{temp+"/frp"+suffix, "-c", temp + "/frp.ini"};
     }
 
     @Override

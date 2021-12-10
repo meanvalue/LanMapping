@@ -1,9 +1,10 @@
 package io.github.meanvalue.lanmapping.configure;
 
-import io.github.meanvalue.lanmapping.factory.LanMappingFactory;
 import io.github.meanvalue.lanmapping.EnableLanMapping;
+import io.github.meanvalue.lanmapping.configure.ding.DingConfigure;
+import io.github.meanvalue.lanmapping.configure.frp.FrpConfigure;
+import io.github.meanvalue.lanmapping.factory.LanMappingFactory;
 import io.github.meanvalue.lanmapping.vo.LanMappingVo;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -28,7 +29,7 @@ public class LanMappingConfigure {
      * @return
      */
     @Bean
-    @ConditionalOnMissingBean
+    //@ConditionalOnMissingBean
     public LanMappingVo lanMappingVo(ApplicationContext applicationContext) {
         LanMappingVo vo = new LanMappingVo();
         // 获取使用注解的bean信息

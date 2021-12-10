@@ -26,8 +26,14 @@ public class LanMappingCommand implements CommandLineRunner {
     private String port;
     @Override
     public void run(String... args) {
+        System.out.println(port);
         // 填入默认项目端口
         if (StringUtils.isEmpty(lanMappingVo.getLoaclPort())) {
+            if (StringUtils.isEmpty(port)) {
+                // 设置默认端口
+                port = "8080";
+            }
+            // 设置本地端口
             lanMappingVo.setLoaclPort(port);
         }
         // 设置默认远程端口
